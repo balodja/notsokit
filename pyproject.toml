@@ -1,0 +1,51 @@
+[project]
+name = "notsokit"
+version = "0.0"
+description = "Graph analysis done... somehow"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "License.txt"}
+keywords =["graph algorithm", "network analysis"]
+authors = [
+  {name = "John Doe"},
+]
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Environment :: Web Environment",
+  "Environment :: Other Environment",
+  "Framework :: IPython",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: C++",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Visualization"
+]
+
+dependencies = [
+  "numpy",
+]
+
+[project.urls]
+homepage = "http://localhost/"
+documentation = "http://localhost/docs/"
+repository = "https://github.com/balodja/notsokit"
+
+
+[build-system]
+requires = [
+  "cython",
+  "numpy",
+  "setuptools",
+  "wheel"
+]
