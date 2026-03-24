@@ -302,7 +302,7 @@ if(NOTSOKIT_PYTHON)
 		endif()
 	endif()
 	
-	foreach (EXT graph)
+	foreach (EXT graph distance)
 
 		if(NOT EXISTS "${PROJECT_SOURCE_DIR}/notsokit/${EXT}.cpp")
 			message(FATAL_ERROR "notsokit/${EXT}.cpp is missing. Invoke Cython manually.")
