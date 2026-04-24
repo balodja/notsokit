@@ -1,5 +1,6 @@
 #include <notsokit/graph/graph.hpp>
 #include <iostream>
+#include <iomanip>
 
 namespace notsokit {
 
@@ -38,6 +39,8 @@ bool is_close(double a, double b, double reltol, double abstol) {
 bool Graph::isFeasible(const edgeweight *heu, double reltol, double abstol) const {
     bool br = forEdges([&](edgeid e, nodeid u, nodeid v, edgeweight w) {
         if ((w + heu[v] < heu[u]) && !is_close(w + heu[v], heu[u], reltol, abstol)) {
+			std::cerr << std::setprecision(20);
+			std::cerr << "Infeasible edge: " << u << " -> " << v << " (" << e << ") with weight " << w << std::endl;
             return true;
         }
         return false;

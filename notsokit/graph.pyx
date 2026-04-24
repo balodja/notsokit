@@ -20,6 +20,9 @@ cdef class Graph:
 	def upperNodeIdBound(self) -> int:
 		return self._this.upperNodeIdBound()
 
+	def upperEdgeIdBound(self) -> int:
+		return self._this.upperEdgeIdBound()
+
 	def transpose(self) -> Graph:
 		cdef Graph g = Graph(0)
 		g._this = self._this
@@ -32,8 +35,8 @@ cdef class Graph:
 	def setWeights(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] weights) -> None:
 		self.external_weights = weights
 
-		if weights.size != self._this.upperNodeIdBound():
-			raise ValueError(f"Expected weights array of size {self._this.upperNodeIdBound()}, got {weights.size}")
+		if weights.size != self._this.upperEdgeIdBound():
+			raise ValueError(f"Expected weights array of size {self._this.upperEdgeIdBound()}, got {weights.size}")
 
 		cdef edgeweight[::1] weights_view = weights
 		self._this.setWeights(&weights_view[0])
@@ -47,7 +50,7 @@ cdef class Graph:
 		cdef nodeavoid[::1] avoids_view = avoids
 		self._this.setAvoidNodes(&avoids_view[0])
 	
-	def isFeasible(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] heu, double reltol = 1e-10, double abstol = 1e-15) -> bool:
+	def isFeasible(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] heu, double reltol = 1e-8, double abstol = 1e-10) -> bool:
 		if heu.size != self._this.upperNodeIdBound():
 			raise ValueError(f"Expected heuristic array of size {self._this.upperNodeIdBound()}, got {heu.size}")
 

@@ -15,6 +15,7 @@ cdef extern from "notsokit/graph/graph.hpp" namespace "notsokit":
 		_Graph(nodeid n) except +
 		_Graph() except +
 		nodeid upperNodeIdBound() except +
+		edgeid upperEdgeIdBound() except +
 		void transpose() except +
 		edgeid addEdge(nodeid u, nodeid v, edgeweight w) except +
 		void setWeights(const edgeweight *w) except +

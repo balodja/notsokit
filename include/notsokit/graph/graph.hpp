@@ -65,6 +65,7 @@ public:
 	void transpose();
 
 	nodeid upperNodeIdBound() const { return n; }
+	edgeid upperEdgeIdBound() const { return edgeWeights.size(); }
 	bool isFeasible(const edgeweight *heu, double reltol, double abstol) const;
 
 	template <typename L> inline bool forEdges(L handle) const;
