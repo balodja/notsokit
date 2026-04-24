@@ -2,6 +2,7 @@
 #define NOTSOKIT_GLOBALS_HPP_
 
 #include <limits>
+#include <cstdint>
 
 namespace notsokit {
 

@@ -1,5 +1,7 @@
 #include <notsokit/distance/astar.hpp>
 #include <unordered_set>
+#include <algorithm>
+#include <stdexcept>
 
 namespace notsokit {
 
@@ -28,11 +30,11 @@ void AStarAdaptive::run() {
 
 	visited.reserve(n);
 
-	std::ranges::fill(distFromSource, infWeight);
+	std::fill(distFromSource.begin(), distFromSource.end(), infWeight);
 	distFromSource.resize(n, infWeight);
 	distFromSource[source] = 0.;
 
-	std::ranges::fill(priority, infWeight);
+	std::fill(priority.begin(), priority.end(), infWeight);
 	priority.resize(n, infWeight);
 	priority[source] = 0.;
 
@@ -77,7 +79,7 @@ void AStarAdaptive::run() {
 		path.push_back(preEdges[v]);
 		v = preNodes[v];
 	}
-	std::ranges::reverse(path);
+	std::reverse(path.begin(), path.end());
 }
 
 vector<edgeid> AStarAdaptive::getPath() const {

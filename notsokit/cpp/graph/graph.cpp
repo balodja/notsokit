@@ -1,6 +1,7 @@
 #include <notsokit/graph/graph.hpp>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 namespace notsokit {
 
