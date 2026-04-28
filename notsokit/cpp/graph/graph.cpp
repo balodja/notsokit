@@ -5,20 +5,25 @@
 
 namespace notsokit {
 
-edgeid Graph::addEdge(nodeid from, nodeid to, edgeweight weight) {
+edgeid Graph::addEdge(nodeid from, nodeid to, const edgeweight *weights) {
 	if (from >= n || to >= n) {
 		throw std::out_of_range("Node id out of range");
 	}
 
-	edgeid id = edgeWeights.size();
+	edgeid id = edgeWeights.size() / k;
 	outEdges[from].emplace_back(to, id);
 	inEdges[to].emplace_back(from, id);
-	edgeWeights.push_back(weight);
+	for (edgeid d = 0; d < k; ++d)
+		edgeWeights.push_back(weights[d]);
 	return id;
 }
 
 void Graph::setWeights(const edgeweight *weights) {
 	std::copy(weights, weights + edgeWeights.size(), edgeWeights.begin());
+}
+
+void Graph::setWeightCoefficients(const edgeweight *coefficients) {
+	std::copy(coefficients, coefficients + k, weightCoefficients.begin());
 }
 
 void Graph::setAvoidNodes(const nodeavoid *avoids) {
