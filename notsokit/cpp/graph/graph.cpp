@@ -18,15 +18,11 @@ edgeid Graph::addEdge(nodeid from, nodeid to, edgeweight weight) {
 }
 
 void Graph::setWeights(const edgeweight *weights) {
-	for (edgeid e = 0; e < edgeWeights.size(); ++e) {
-		edgeWeights[e] = weights[e];
-	}
+	std::copy(weights, weights + edgeWeights.size(), edgeWeights.begin());
 }
 
 void Graph::setAvoidNodes(const nodeavoid *avoids) {
-	for (nodeid u = 0; u < n; ++u) {
-		avoidNodes[u] = avoids[u];
-	}
+	std::copy(avoids, avoids + n, avoidNodes.begin());
 }
 
 void Graph::transpose() {

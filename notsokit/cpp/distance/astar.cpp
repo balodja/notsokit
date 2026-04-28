@@ -82,7 +82,7 @@ void AStarAdaptive::run() {
 	std::reverse(path.begin(), path.end());
 }
 
-vector<edgeid> AStarAdaptive::getPath() const {
+const vector<edgeid>& AStarAdaptive::getPath() const {
 	if (!hasRun) {
 		throw std::runtime_error("AStarAdaptive::getPath: run() must be called before getPath().");
 	}

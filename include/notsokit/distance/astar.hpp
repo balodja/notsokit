@@ -13,7 +13,7 @@ class AStarAdaptive final {
 public:
     AStarAdaptive(const Graph *G, edgeweight *heu, nodeid source, nodeid target);
     void run();
-	vector<edgeid> getPath() const;
+	const vector<edgeid>& getPath() const;
 	
 private:
 	const Graph *G;

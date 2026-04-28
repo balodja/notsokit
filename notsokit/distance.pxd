@@ -26,6 +26,5 @@ cdef extern from "notsokit/distance/astar.hpp" namespace "notsokit":
 
 cdef class AStarAdaptive:
 	cdef _AStarAdaptive *_this
-	cdef vector[edgeweight] heu_vector
 	cdef object heu
 	cdef object graph
