@@ -6,6 +6,16 @@ import numpy as np
 cimport numpy as np
 from notsokit.globals import edgeweight_t
 from notsokit.globals cimport edgeweight
+from notsokit.distance cimport visitedVerticesCount as _visitedVerticesCount
+
+
+def getVisitedVerticesCount():
+	return _visitedVerticesCount
+
+
+def resetVisitedVerticesCount():
+	global _visitedVerticesCount
+	_visitedVerticesCount = 0
 
 
 cdef class Dijkstra:

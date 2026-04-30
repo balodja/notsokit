@@ -25,6 +25,7 @@ void Dijkstra::run() {
 
     do {
         nodeid u = heap.extract_top();
+        ++visitedVerticesCount;
 
         if (distances[u] == infWeight)
             break;

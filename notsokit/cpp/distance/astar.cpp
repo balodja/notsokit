@@ -1,4 +1,5 @@
 #include <notsokit/distance/astar.hpp>
+#include <notsokit/globals.hpp>
 #include <unordered_set>
 #include <algorithm>
 #include <stdexcept>
@@ -46,6 +47,7 @@ void AStarAdaptive::run() {
 	nodeid top = none;
 	do {
 		top = heap.extract_top();
+		++visitedVerticesCount;
 		if (top == target) {
 			distance = distFromSource[target];
 			for (const auto& u : visited) {

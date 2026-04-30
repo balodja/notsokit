@@ -2,6 +2,11 @@
 from libcpp.vector cimport vector
 from notsokit.graph cimport _Graph, Graph
 from notsokit.globals cimport edgeid, nodeid, edgeweight
+from libc.stdint cimport uint64_t
+
+
+cdef extern from "notsokit/globals.hpp" namespace "notsokit":
+	uint64_t visitedVerticesCount
 
 
 cdef extern from "notsokit/distance/dijkstra.hpp" namespace "notsokit":
