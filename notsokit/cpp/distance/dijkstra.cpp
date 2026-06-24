@@ -4,12 +4,13 @@
 
 namespace notsokit {
 
-Dijkstra::Dijkstra(const Graph &G, nodeid source)
-    : G(&G),
+Dijkstra::Dijkstra(const Graph *G, const edgeweight *wc, nodeid source)
+    : G(G),
+	wc(wc),
 	source(source),
-	distances(G.upperNodeIdBound()),
-	preNodes(G.upperNodeIdBound()),
-	preEdges(G.upperNodeIdBound()),
+	distances(G->upperNodeIdBound()),
+	preNodes(G->upperNodeIdBound()),
+	preEdges(G->upperNodeIdBound()),
 	heap(Aux::LessInVector<double>(distances))
 {}
 
@@ -30,7 +31,7 @@ void Dijkstra::run() {
         if (distances[u] == infWeight)
             break;
 
-        G->forOutEdgesOf(u, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
+        G->forOutEdgesOf(u, wc, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
             edgeweight newDist = distances[u] + w;
 
 			if (newDist == infWeight)

@@ -13,13 +13,14 @@ namespace notsokit {
 class Dijkstra final {
 
 public:
-    Dijkstra(const Graph &G, nodeid source);
+    Dijkstra(const Graph *G, const edgeweight *wc, nodeid source);
     void run();
 	vector<edgeid> getPath(nodeid target) const;
 	vector<edgeweight> getDistances() const { return distances; }
 	
 private:
 	const Graph *G;
+	const edgeweight *wc;
 	nodeid source;
     vector<edgeweight> distances;
     vector<nodeid> preNodes;

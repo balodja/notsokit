@@ -1,5 +1,6 @@
 from notsokit.globals cimport edgeid, nodeid, edgeweight, nodeavoid
 from libcpp.vector cimport vector
+from libcpp.pair cimport pair
 from libcpp cimport bool as bool_t
 
 
@@ -13,16 +14,17 @@ cdef extern from "<algorithm>" namespace "std":
 cdef extern from "notsokit/graph/graph.hpp" namespace "notsokit":
 	cdef cppclass _Graph "notsokit::Graph":
 		_Graph() except +
-		_Graph(nodeid n, edgeid k) except +
+		_Graph(nodeid n, edgeid k, edgeweight reltol, edgeweight abstol) except +
 		nodeid upperNodeIdBound() except +
 		edgeid upperEdgeIdBound() except +
 		edgeid numDims() except +
 		void transpose() except +
 		edgeid addEdge(nodeid u, nodeid v, const edgeweight *weights) except +
 		void setWeights(const edgeweight *w) except +
-		void setWeightCoefficients(const edgeweight *coefficients) except +
 		void setAvoidNodes(const nodeavoid *avoids) except +
-		bool_t isFeasible(const edgeweight *heu, double reltol, double abstol) except +
+		bool_t isFeasible(const edgeweight *wc, const edgeweight *heu) except +
+		void setTolerance(edgeweight reltol, edgeweight abstol) except +
+		pair[edgeweight, edgeweight] getTolerance() except +
 
 
 cdef class Graph:

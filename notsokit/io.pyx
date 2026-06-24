@@ -10,8 +10,11 @@ cimport numpy as np
 from notsokit.globals import edgeweight_t
 
 
-def write_graph(Graph g, str nodes_file, str edges_file) -> None:
-    _writeGraph(g._this, nodes_file.encode(), edges_file.encode())
+def write_graph(Graph g, np.ndarray[edgeweight, ndim=1, mode='c'] wc, str nodes_file, str edges_file) -> None:
+    if wc.shape[0] != g.numDims():
+        raise ValueError(f"Expected wc array of size {g.numDims()}, got {wc.shape[0]}")
+    cdef edgeweight[::1] wc_view = wc
+    _writeGraph(g._this, &wc_view[0], nodes_file.encode(), edges_file.encode())
 
 
 def read_graph(str nodes_file, str edges_file) -> Graph:

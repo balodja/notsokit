@@ -11,7 +11,7 @@ cdef extern from "notsokit/globals.hpp" namespace "notsokit":
 
 cdef extern from "notsokit/distance/dijkstra.hpp" namespace "notsokit":
 	cdef cppclass _Dijkstra "notsokit::Dijkstra":
-		_Dijkstra(_Graph & g, nodeid n) except +
+		_Dijkstra(const _Graph *g, const edgeweight *wc, nodeid source) except +
 		void run() except +
 		vector[edgeid] getPath(nodeid target) except +
 		vector[edgeweight] getDistances() except +
@@ -20,16 +20,18 @@ cdef extern from "notsokit/distance/dijkstra.hpp" namespace "notsokit":
 cdef class Dijkstra:
 	cdef _Dijkstra *_this
 	cdef object graph
+	cdef object wc
 
 
 cdef extern from "notsokit/distance/astar.hpp" namespace "notsokit":
 	cdef cppclass _AStarAdaptive "notsokit::AStarAdaptive":
-		_AStarAdaptive(const _Graph *g, edgeweight *heu, nodeid source, nodeid target) except +
+		_AStarAdaptive(const _Graph *g, const edgeweight *wc, edgeweight *heu, nodeid source, nodeid target) except +
 		void run() except +
 		vector[edgeid] getPath() except +
 
 
 cdef class AStarAdaptive:
 	cdef _AStarAdaptive *_this
+	cdef object wc
 	cdef object heu
 	cdef object graph

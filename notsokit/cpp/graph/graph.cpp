@@ -1,7 +1,7 @@
+#include <notsokit/globals.hpp>
 #include <notsokit/graph/graph.hpp>
 #include <iostream>
 #include <iomanip>
-#include <cmath>
 
 namespace notsokit {
 
@@ -22,10 +22,6 @@ void Graph::setWeights(const edgeweight *weights) {
 	std::copy(weights, weights + edgeWeights.size(), edgeWeights.begin());
 }
 
-void Graph::setWeightCoefficients(const edgeweight *coefficients) {
-	std::copy(coefficients, coefficients + k, weightCoefficients.begin());
-}
-
 void Graph::setAvoidNodes(const nodeavoid *avoids) {
 	std::copy(avoids, avoids + n, avoidNodes.begin());
 }
@@ -34,12 +30,8 @@ void Graph::transpose() {
 	std::swap(inEdges, outEdges);
 }
 
-bool is_close(double a, double b, double reltol, double abstol) {
-    return std::fabs(a - b) <= std::max(reltol * std::max(std::fabs(a), std::fabs(b)), abstol);
-}
-
-bool Graph::isFeasible(const edgeweight *heu, double reltol, double abstol) const {
-    bool br = forEdges([&](edgeid e, nodeid u, nodeid v, edgeweight w) {
+bool Graph::isFeasible(const edgeweight *wc, const edgeweight *heu) const {
+    bool br = forEdges(wc, [&](edgeid e, nodeid u, nodeid v, edgeweight w) {
         if ((w + heu[v] < heu[u]) && !is_close(w + heu[v], heu[u], reltol, abstol)) {
 			std::cerr << std::setprecision(20);
 			std::cerr << "Infeasible edge: " << u << " -> " << v << " (" << e << ") with weight " << w << std::endl;

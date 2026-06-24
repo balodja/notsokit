@@ -22,7 +22,7 @@ class TestIO(unittest.TestCase):
         """Roundtrip preserves node count."""
         g = self._make_graph()
         with tempfile.TemporaryDirectory() as d:
-            write_graph(g, os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
+            write_graph(g, np.array([1.0]), os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
             g2 = read_graph(os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
         self.assertEqual(g2.upperNodeIdBound(), g.upperNodeIdBound())
 
@@ -30,7 +30,7 @@ class TestIO(unittest.TestCase):
         """Roundtrip preserves edge count."""
         g = self._make_graph()
         with tempfile.TemporaryDirectory() as d:
-            write_graph(g, os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
+            write_graph(g, np.array([1.0]), os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
             g2 = read_graph(os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
         self.assertEqual(g2.upperEdgeIdBound(), g.upperEdgeIdBound())
 
@@ -38,12 +38,12 @@ class TestIO(unittest.TestCase):
         """Shortest paths computed on a roundtripped graph match the original."""
         g = self._make_graph()
         with tempfile.TemporaryDirectory() as d:
-            write_graph(g, os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
+            write_graph(g, np.array([1.0]), os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
             g2 = read_graph(os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
 
-        d1 = notsokit.distance.Dijkstra(g, 0)
+        d1 = notsokit.distance.Dijkstra(g, np.array([1.0]), 0)
         d1.run()
-        d2 = notsokit.distance.Dijkstra(g2, 0)
+        d2 = notsokit.distance.Dijkstra(g2, np.array([1.0]), 0)
         d2.run()
         self.assertEqual(d1.getDistances().tolist(), d2.getDistances().tolist())
 
@@ -56,12 +56,12 @@ class TestIO(unittest.TestCase):
         g.setAvoidNodes(np.array([0, 1, 0], dtype=np.uint8))
 
         with tempfile.TemporaryDirectory() as d:
-            write_graph(g, os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
+            write_graph(g, np.array([1.0]), os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
             g2 = read_graph(os.path.join(d, 'nodes.csv'), os.path.join(d, 'edges.csv'))
 
         # With node 1 avoided, only the direct 0->2 edge was written.
         # In the reconstructed graph it gets edge id 0.
-        d2 = notsokit.distance.Dijkstra(g2, 0)
+        d2 = notsokit.distance.Dijkstra(g2, np.array([1.0]), 0)
         d2.run()
         self.assertEqual(d2.getPath(2), [0])
 
@@ -72,7 +72,7 @@ class TestIO(unittest.TestCase):
         g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
         with tempfile.TemporaryDirectory() as d:
             nodes_path = os.path.join(d, 'nodes.csv')
-            write_graph(g, nodes_path, os.path.join(d, 'edges.csv'))
+            write_graph(g, np.array([1.0]), nodes_path, os.path.join(d, 'edges.csv'))
             with open(nodes_path) as f:
                 lines = f.read().splitlines()
         self.assertEqual(lines[0], 'node_id,avoid')
@@ -86,7 +86,7 @@ class TestIO(unittest.TestCase):
         g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
         with tempfile.TemporaryDirectory() as d:
             edges_path = os.path.join(d, 'edges.csv')
-            write_graph(g, os.path.join(d, 'nodes.csv'), edges_path)
+            write_graph(g, np.array([1.0]), os.path.join(d, 'nodes.csv'), edges_path)
             with open(edges_path) as f:
                 lines = f.read().splitlines()
         self.assertEqual(lines[0], 'from,to,weight')

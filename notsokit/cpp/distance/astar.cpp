@@ -6,8 +6,8 @@
 
 namespace notsokit {
 
-AStarAdaptive::AStarAdaptive(const Graph *G, edgeweight *heu, nodeid source, nodeid target)
-	: G(G), heu(heu), source(source), target(target), path(), distFromSource(), priority(), heap{priority}
+AStarAdaptive::AStarAdaptive(const Graph *G, const edgeweight *wc, edgeweight *heu, nodeid source, nodeid target)
+	: G(G), wc(wc), heu(heu), source(source), target(target), path(), distFromSource(), priority(), heap{priority}
 {
 }
 
@@ -56,7 +56,7 @@ void AStarAdaptive::run() {
 			break;
 		}
 
-		G->forOutEdgesOf(top, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
+		G->forOutEdgesOf(top, wc, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
 			if (visited.find(v) == visited.end()) {
 				visited.insert(v);
 			}

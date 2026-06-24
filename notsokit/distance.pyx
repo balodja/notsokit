@@ -19,9 +19,15 @@ def resetVisitedVerticesCount():
 
 
 cdef class Dijkstra:
-	def __cinit__(self, Graph g, int source):
+	def __cinit__(self, Graph g, np.ndarray[edgeweight, ndim=1, mode='c'] wc, int source):
 		self.graph = g
-		self._this = new _Dijkstra(g._this, source)
+		self.wc = wc
+
+		if wc.shape[0] != g.numDims():
+			raise ValueError(f"Expected wc array of size {g.numDims()}, got {wc.shape[0]}")
+
+		cdef edgeweight[::1] wc_view = wc
+		self._this = new _Dijkstra(&g._this, &wc_view[0], source)
 
 	def __dealloc__(self):
 		del self._this
@@ -45,16 +51,20 @@ cdef class Dijkstra:
 
 
 cdef class AStarAdaptive:
-	def __cinit__(self, Graph g, np.ndarray[edgeweight, ndim=1, mode='c'] heu, int source, int target):
+	def __cinit__(self, Graph g, np.ndarray[edgeweight, ndim=1, mode='c'] wc, np.ndarray[edgeweight, ndim=1, mode='c'] heu, int source, int target):
 		self.graph = g
 		self.heu = heu
 
-		cdef edgeweight[::1] heu_view = heu
+		if wc.shape[0] != g.numDims():
+			raise ValueError(f"Expected wc array of size {g.numDims()}, got {wc.shape[0]}")
 
 		if heu.size != self.graph.upperNodeIdBound():
 			raise ValueError(f"Expected heuristic array of size {self.graph.upperNodeIdBound()}, got {heu.size}")
 
-		self._this = new _AStarAdaptive(&g._this, &heu_view[0], source, target)
+		cdef edgeweight[::1] wc_view = wc
+		cdef edgeweight[::1] heu_view = heu
+
+		self._this = new _AStarAdaptive(&g._this, &wc_view[0], &heu_view[0], source, target)
 
 	def __dealloc__(self):
 		del self._this

@@ -1,6 +1,7 @@
 #ifndef NOTSOKIT_GRAPH_GRAPH_HPP
 #define NOTSOKIT_GRAPH_GRAPH_HPP
 
+#include <utility>
 #include <vector>
 #include <tuple>
 #include <notsokit/globals.hpp>
@@ -15,18 +16,19 @@ class Graph final {
 	vector<vector<tuple<nodeid, edgeid>>> outEdges;
     vector<vector<tuple<nodeid, edgeid>>> inEdges;
 	vector<edgeweight> edgeWeights;
-	vector<edgeweight> weightCoefficients;
 	vector<nodeavoid> avoidNodes;
+	edgeweight reltol;
+	edgeweight abstol;
 public:
-	Graph() : Graph(0, 1) {};
-	Graph(nodeid numNodes, edgeid numDims)
-    	: n(numNodes), k(numDims), outEdges(numNodes, vector<tuple<nodeid, edgeid>>()), inEdges(numNodes, vector<tuple<nodeid, edgeid>>()), edgeWeights(), weightCoefficients(numDims, 1.0), avoidNodes(numNodes, false)
+	Graph() : Graph(0, 1, 0, 0) {};
+	Graph(nodeid numNodes, edgeid numDims, edgeweight reltol, edgeweight abstol)
+    	: n(numNodes), k(numDims), outEdges(numNodes, vector<tuple<nodeid, edgeid>>()), inEdges(numNodes, vector<tuple<nodeid, edgeid>>()), edgeWeights(), avoidNodes(numNodes, false), reltol(reltol), abstol(abstol)
 	{
 		edgeWeights.reserve(numNodes * numDims);
 	};
 
     Graph(const Graph &other)
-		: n(other.n), k(other.k), inEdges(other.inEdges), outEdges(other.outEdges), edgeWeights(other.edgeWeights), weightCoefficients(other.weightCoefficients), avoidNodes(other.avoidNodes)
+		: n(other.n), k(other.k), inEdges(other.inEdges), outEdges(other.outEdges), edgeWeights(other.edgeWeights), avoidNodes(other.avoidNodes), reltol(other.reltol), abstol(other.abstol)
 		{};
 
     Graph(Graph &&other) noexcept
@@ -35,8 +37,9 @@ public:
           inEdges(std::move(other.inEdges)),
           outEdges(std::move(other.outEdges)),
 		  edgeWeights(std::move(other.edgeWeights)),
-		  weightCoefficients(std::move(other.weightCoefficients)),
-          avoidNodes(std::move(other.avoidNodes))
+          avoidNodes(std::move(other.avoidNodes)),
+		  reltol(other.reltol),
+		  abstol(other.abstol)
 		{};
 
     ~Graph() = default;
@@ -47,8 +50,9 @@ public:
         std::swap(inEdges, other.inEdges);
         std::swap(outEdges, other.outEdges);
 		std::swap(edgeWeights, other.edgeWeights);
-		std::swap(weightCoefficients, other.weightCoefficients);
 		std::swap(avoidNodes, other.avoidNodes);
+		std::swap(reltol, other.reltol);
+		std::swap(abstol, other.abstol);
 
         return *this;
     };
@@ -59,8 +63,9 @@ public:
         inEdges = other.inEdges;
         outEdges = other.outEdges;
 		edgeWeights = other.edgeWeights;
-		weightCoefficients = other.weightCoefficients;
 		avoidNodes = other.avoidNodes;
+		reltol = other.reltol;
+		abstol = other.abstol;
         return *this;
     };
 
@@ -74,13 +79,15 @@ public:
 	nodeid upperNodeIdBound() const { return n; }
 	edgeid upperEdgeIdBound() const { return edgeWeights.size() / k; }
 	edgeid numDims() const { return k; }
-	bool isFeasible(const edgeweight *heu, double reltol, double abstol) const;
+	bool isFeasible(const edgeweight *wc, const edgeweight *heu) const;
+	void setTolerance(edgeweight reltol, edgeweight abstol) { this->reltol = reltol; this->abstol = abstol; }
+	std::pair<edgeweight, edgeweight> getTolerance() const { return {reltol, abstol}; }
 
-	template <typename L> inline bool forEdges(L handle) const;
-	template <typename L> inline bool forOutEdgesOf(nodeid u, L handle) const;
+	template <typename L> inline bool forEdges(const edgeweight *wc, L handle) const;
+	template <typename L> inline bool forOutEdgesOf(nodeid u, const edgeweight *wc,  L handle) const;
 };
 
-template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, L handle) const {
+template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, const edgeweight *wc, L handle) const {
 	if (this->avoidNodes[u]) return false;
 
     for (nodeid i = 0; i < outEdges[u].size(); ++i) {
@@ -93,16 +100,16 @@ template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, L handle) const
 
 		edgeweight effectiveWeight = 0;
 		for (edgeid d = 0; d < k; ++d)
-			effectiveWeight += weightCoefficients[d] * edgeWeights[e * k + d];
+			effectiveWeight += wc[d] * edgeWeights[e * k + d];
 
 		if (handle(e, u, v, effectiveWeight)) return true;
     }
     return false;
 }
 
-template <typename L> inline bool Graph::forEdges(L handle) const {
+template <typename L> inline bool Graph::forEdges(const edgeweight *wc, L handle) const {
     for (nodeid u = 0; u < n; ++u) {
-        if (forOutEdgesOf(u, handle)) return true;
+        if (forOutEdgesOf(u, wc, handle)) return true;
     }
 	return false;
 }

@@ -11,12 +11,13 @@ namespace notsokit {
 class AStarAdaptive final {
 
 public:
-    AStarAdaptive(const Graph *G, edgeweight *heu, nodeid source, nodeid target);
+    AStarAdaptive(const Graph *G, const edgeweight *wc, edgeweight *heu, nodeid source, nodeid target);
     void run();
 	const vector<edgeid>& getPath() const;
 	
 private:
 	const Graph *G;
+	const edgeweight *wc;
 	edgeweight *heu;
 	nodeid source;
 	nodeid target;

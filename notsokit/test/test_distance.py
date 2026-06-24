@@ -19,7 +19,7 @@ class TestDijkstra(unittest.TestCase):
         g.addEdge(0, 1, np.array([1.0]))
         g.addEdge(1, 2, np.array([2.0]))
         g.setWeights(np.array([[1.0], [2.0]], dtype=np.float64))
-        d = notsokit.distance.Dijkstra(g, 0)
+        d = notsokit.distance.Dijkstra(g, np.array([1.0]), 0)
         d.run()
         self.assertEqual(d.getDistances().tolist(), [0.0, 1.0, 3.0])
 
@@ -31,7 +31,7 @@ class TestDijkstra(unittest.TestCase):
         """Test that avoiding a node prevents paths through it."""
         self.g.setWeights(np.array([[1.0], [2.0], [3.5]], dtype=np.float64))
         self.g.setAvoidNodes(np.array([0, 1, 0], dtype=np.uint8))
-        d = notsokit.distance.Dijkstra(self.g, 0)
+        d = notsokit.distance.Dijkstra(self.g, np.array([1.0]), 0)
         d.run()
         self.assertEqual(self._getPath(d), [[], [], [2]])
 
@@ -39,7 +39,7 @@ class TestDijkstra(unittest.TestCase):
         """Test standard shortest paths with no node avoidance."""
         self.g.setWeights(np.array([[1.0], [2.0], [3.5]], dtype=np.float64))
         self.g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
-        d = notsokit.distance.Dijkstra(self.g, 0)
+        d = notsokit.distance.Dijkstra(self.g, np.array([1.0]), 0)
         d.run()
         self.assertEqual(self._getPath(d), [[], [0], [0, 1]])
 
@@ -47,7 +47,7 @@ class TestDijkstra(unittest.TestCase):
         """Test shortest paths with custom edge weights."""
         self.g.setWeights(np.array([[1.0], [2.0], [2.5]], dtype=np.float64))
         self.g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
-        d = notsokit.distance.Dijkstra(self.g, 0)
+        d = notsokit.distance.Dijkstra(self.g, np.array([1.0]), 0)
         d.run()
         self.assertEqual(self._getPath(d), [[], [0], [2]])
 
@@ -55,7 +55,7 @@ class TestDijkstra(unittest.TestCase):
         """Test that infinite edge weights block paths."""
         self.g.setWeights(np.array([[float('inf')], [2.0], [2.5]], dtype=np.float64))
         self.g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
-        d = notsokit.distance.Dijkstra(self.g, 0)
+        d = notsokit.distance.Dijkstra(self.g, np.array([1.0]), 0)
         d.run()
         self.assertEqual(self._getPath(d), [[], [], [2]])
 
@@ -64,7 +64,7 @@ class TestDijkstra(unittest.TestCase):
         self.g.setWeights(np.array([[1.0], [2.0], [3.5]], dtype=np.float64))
         self.g.setAvoidNodes(np.array([0, 0, 0], dtype=np.uint8))
         heuristic = np.array([1, 10, 1], dtype=np.float64)
-        self.assertFalse(self.g.isFeasible(heuristic, reltol=0.0, abstol=0.0))
+        self.assertFalse(self.g.isFeasible(np.array([1.0]), heuristic))
 
     def test_astar_matches_dijkstra(self):
         """Test that A* with zero heuristic matches Dijkstra."""
@@ -84,10 +84,10 @@ class TestDijkstra(unittest.TestCase):
 
         # Zero heuristic means A* behaves like Dijkstra
         heu = np.zeros(10, dtype=np.float64)
-        a = notsokit.distance.AStarAdaptive(g, heu, 0, 6)
+        a = notsokit.distance.AStarAdaptive(g, np.array([1.0]), heu, 0, 6)
         a.run()
 
-        d = notsokit.distance.Dijkstra(g, 0)
+        d = notsokit.distance.Dijkstra(g, np.array([1.0]), 0)
         d.run()
 
         # A* path to 6 should match Dijkstra's path to 6
@@ -109,12 +109,12 @@ class TestDijkstra(unittest.TestCase):
         g.addEdge(4, 7, np.array([3.0]))
         g.addEdge(7, 6, np.array([1.5]))
 
-        d = notsokit.distance.Dijkstra(g, 0)
+        d = notsokit.distance.Dijkstra(g, np.array([1.0]), 0)
         d.run()
 
         dists = d.getDistances()
         # Shortest path distances should be feasible
-        self.assertTrue(g.isFeasible(dists, reltol=0.0, abstol=0.0))
+        self.assertTrue(g.isFeasible(np.array([1.0]), dists))
 
 
 if __name__ == '__main__':

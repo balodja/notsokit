@@ -15,7 +15,7 @@ namespace notsokit {
 // Write graph to two CSV files.
 // nodes.csv columns: node_id, avoid
 // edges.csv columns: from, to, weight  (effective combined weight)
-inline void writeGraph(const Graph &g,
+inline void writeGraph(const Graph &g, const edgeweight *wc,
                        const std::string &nodesFile,
                        const std::string &edgesFile)
 {
@@ -31,7 +31,7 @@ inline void writeGraph(const Graph &g,
         if (!out) throw std::runtime_error("Cannot open for writing: " + edgesFile);
         out << "from,to,weight\n";
         out << std::setprecision(17);
-        g.forEdges([&out](edgeid /*e*/, nodeid u, nodeid v, edgeweight w) -> bool {
+        g.forEdges(wc, [&out](edgeid /*e*/, nodeid u, nodeid v, edgeweight w) -> bool {
             out << u << ',' << v << ',' << w << '\n';
             return false;
         });
@@ -59,7 +59,7 @@ inline Graph readGraph(const std::string &nodesFile,
         }
     }
 
-    Graph g(static_cast<nodeid>(avoids.size()), 1);
+    Graph g(static_cast<nodeid>(avoids.size()), 1, 0, 0);
     g.setAvoidNodes(avoids.data());
 
     {

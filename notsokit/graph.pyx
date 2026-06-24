@@ -4,12 +4,13 @@
 import numpy as np
 cimport numpy as cnp
 from libcpp.vector cimport vector
+from libcpp.pair cimport pair
 from notsokit.globals cimport edgeid, nodeid, edgeweight, nodeavoid
 
 
 cdef class Graph:
-	def __init__(self, int n, int k = 1):
-		self._this = _Graph(n, k)
+	def __init__(self, int n, int k = 1, double reltol = 1e-8, double abstol = 1e-10):
+		self._this = _Graph(n, k, reltol, abstol)
 		self.external_weights = None
 		self.external_avoids = None
 
@@ -47,13 +48,6 @@ cdef class Graph:
 		cdef edgeweight[:,::1] weights_view = weights
 		self._this.setWeights(&weights_view[0, 0])
 
-	def setWeightCoefficients(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] coefficients) -> None:
-		if coefficients.shape[0] != self._this.numDims():
-			raise ValueError(f"Expected coefficients array of size {self._this.numDims()}, got {coefficients.shape[0]}")
-
-		cdef edgeweight[::1] coefficients_view = coefficients
-		self._this.setWeightCoefficients(&coefficients_view[0])
-
 	def setAvoidNodes(self, cnp.ndarray[nodeavoid, ndim=1, mode='c'] avoids) -> None:
 		self.external_avoids = avoids
 
@@ -62,10 +56,20 @@ cdef class Graph:
 
 		cdef nodeavoid[::1] avoids_view = avoids
 		self._this.setAvoidNodes(&avoids_view[0])
-	
-	def isFeasible(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] heu, double reltol = 1e-8, double abstol = 1e-10) -> bool:
+
+	def isFeasible(self, cnp.ndarray[edgeweight, ndim=1, mode='c'] wc, cnp.ndarray[edgeweight, ndim=1, mode='c'] heu) -> bool:
+		if wc.shape[0] != self._this.numDims():
+			raise ValueError(f"Expected wc array of size {self._this.numDims()}, got {wc.shape[0]}")
 		if heu.size != self._this.upperNodeIdBound():
 			raise ValueError(f"Expected heuristic array of size {self._this.upperNodeIdBound()}, got {heu.size}")
 
+		cdef edgeweight[::1] wc_view = wc
 		cdef edgeweight[::1] heu_view = heu
-		return self._this.isFeasible(&heu_view[0], reltol, abstol)
+		return self._this.isFeasible(&wc_view[0], &heu_view[0])
+
+	def setTolerance(self, double reltol, double abstol) -> None:
+		self._this.setTolerance(reltol, abstol)
+
+	def getTolerance(self) -> tuple:
+		cdef pair[edgeweight, edgeweight] tol = self._this.getTolerance()
+		return (tol.first, tol.second)
