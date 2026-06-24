@@ -38,21 +38,13 @@ void AStarAdaptive::run() {
 	std::unordered_set<nodeid> visited;
 	visited.reserve(n);
 
-	std::fill(preds.begin(), preds.end(), nonePred);
-	preds.resize(n, nonePred);
-
-    vector<edgeweight> distFromSource;
-	std::fill(distFromSource.begin(), distFromSource.end(), infWeight);
-	distFromSource.resize(n, infWeight);
+    vector<edgeweight> distFromSource(n, infWeight);
 	distFromSource[source] = 0.;
 
-    vector<edgeweight> priority;
-	std::fill(priority.begin(), priority.end(), infWeight);
-	priority.resize(n, infWeight);
+    vector<edgeweight> priority(n, infWeight);
 	priority[source] = 0.;
 
     tlx::d_ary_addressable_int_heap<nodeid, 2, Aux::LessInVector<edgeweight>> heap(priority);
-	heap.clear();
 	heap.reserve(n);
 	heap.push(source);
 
@@ -75,16 +67,13 @@ void AStarAdaptive::run() {
 			const edgeweight oldDist = distFromSource[v];
 
 			if (is_close(newDist, oldDist, reltol, abstol)) {
-				// add to the pool of predecessors for v
 				preds_pool.push_back({top, e, preds[v]});
 				preds[v] = preds_pool.size() - 1;
 
 				if (preds_pool.size() == nonePred) {
 					throw std::runtime_error("AStarAdaptive::run: Predecessor pool overflow.");
 				}
-			}
-
-			if (newDist < oldDist) {
+			} else if (newDist < oldDist) {
 				distFromSource[v] = newDist;
 				priority[v] = newDist + heu[v];
 				heap.update(v);
@@ -112,31 +101,10 @@ vector<vector<edgeid>> AStarAdaptive::getPaths() const {
 		throw std::runtime_error("AStarAdaptive::getPaths: run() must be called before getPaths().");
 	}
 
-	vector<vector<edgeid>> paths;
-	paths.clear();
 	if (distance == infWeight) {
-		return paths;
+		return {};
 	}
 
-	vector<edgeid> current;
-	std::function<void(nodeid)> collect = [&](nodeid v) {
-		if (v == source) {
-			paths.push_back(current);
-			std::reverse(paths.back().begin(), paths.back().end());
-			return;
-		}
-		predid pid = preds[v];
-		while (pid != nonePred) {
-			const Predecessor& pred = preds_pool[pid];
-			current.push_back(pred.edge);
-			collect(pred.node);
-			current.pop_back();
-			pid = pred.previous;
-		}
-	};
-
-	collect(target);
-	return paths;
+	return predPoolGetPaths(preds, preds_pool, source, target);
 }
-
 } // namespace notsokit

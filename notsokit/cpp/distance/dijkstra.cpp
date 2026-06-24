@@ -8,20 +8,23 @@ Dijkstra::Dijkstra(const Graph *G, const edgeweight *wc, nodeid source)
     : G(G),
 	wc(wc),
 	source(source),
-	distances(G->upperNodeIdBound()),
-	preNodes(G->upperNodeIdBound()),
-	preEdges(G->upperNodeIdBound()),
-	heap(Aux::LessInVector<double>(distances))
+	distances(G->upperNodeIdBound(), infWeight),
+	preds(G->upperNodeIdBound(), nonePred),
+	preds_pool()
 {}
 
 void Dijkstra::run() {
 	if (hasRun)
 		return;
-
-    std::fill(distances.begin(), distances.end(), infWeight);
+	
+	nodeid n = G->upperNodeIdBound();
+	edgeweight reltol, abstol;
+	std::tie(reltol, abstol) = G->getTolerance();
 
     distances[source] = 0.;
-    heap.clear();
+
+    tlx::d_ary_addressable_int_heap<nodeid, 2, Aux::LessInVector<edgeweight>> heap(distances);
+	heap.reserve(n);
     heap.push(source);
 
     do {
@@ -37,16 +40,19 @@ void Dijkstra::run() {
 			if (newDist == infWeight)
                 return false;
 
-            if (distances[v] == infWeight) {
-                distances[v] = newDist;
-                heap.push(v);
-				preNodes[v] = u;
-				preEdges[v] = e;
+            if (is_close(newDist, distances[v], reltol, abstol)) {
+				preds_pool.push_back({u, e, preds[v]});
+				preds[v] = preds_pool.size() - 1;
+
+				if (preds_pool.size() == nonePred) {
+					throw std::runtime_error("Dijkstra::run: Predecessor pool overflow.");
+				}
             } else if (distances[v] > newDist) {
                 distances[v] = newDist;
                 heap.update(v);
-				preNodes[v] = u;
-				preEdges[v] = e;
+
+				preds_pool.push_back({u, e, nonePred});
+				preds[v] = preds_pool.size() - 1;
             }
 
 			return false;
@@ -56,16 +62,11 @@ void Dijkstra::run() {
     hasRun = true;
 }
 
-vector<edgeid> Dijkstra::getPath(nodeid target) const {
-	vector<edgeid> path;
+vector<vector<edgeid>> Dijkstra::getPaths(nodeid target) const {
 	if (!hasRun || distances[target] == infWeight)
-		return path;
+		return {};
 
-	for (nodeid u = target; u != source; u = preNodes[u]) {
-		path.push_back(preEdges[u]);
-	}
-	std::reverse(path.begin(), path.end());
-	return path;
+	return predPoolGetPaths(preds, preds_pool, source, target);
 }
 
 } // namespace notsokit

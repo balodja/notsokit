@@ -35,8 +35,8 @@ cdef class Dijkstra:
 	def run(self):
 		self._this.run()
 
-	def getPath(self, int target):
-		return self._this.getPath(target)
+	def getPaths(self, int target):
+		return self._this.getPaths(target)
 
 	def getDistances(self):
 		cdef vector[edgeweight] distances = self._this.getDistances()

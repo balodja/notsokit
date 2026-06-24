@@ -16,7 +16,7 @@ class Dijkstra final {
 public:
     Dijkstra(const Graph *G, const edgeweight *wc, nodeid source);
     void run();
-	vector<edgeid> getPath(nodeid target) const;
+	vector<vector<edgeid>> getPaths(nodeid target) const;
 	vector<edgeweight> getDistances() const { return distances; }
 	
 private:
@@ -24,9 +24,8 @@ private:
 	const edgeweight *wc;
 	nodeid source;
     vector<edgeweight> distances;
-    vector<nodeid> preNodes;
-	vector<edgeid> preEdges;
-    tlx::d_ary_addressable_int_heap<nodeid, 2, Aux::LessInVector<edgeweight>> heap;
+	vector<predid> preds;
+	vector<Predecessor> preds_pool;
 	bool hasRun = false;
 };
 

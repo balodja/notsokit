@@ -25,7 +25,7 @@ class TestDijkstra(unittest.TestCase):
 
     def _getPath(self, dijkstra):
         """Helper to get paths from all nodes in Dijkstra result."""
-        return [dijkstra.getPath(i) for i in range(3)]
+        return [dijkstra.getPaths(i)[0] if dijkstra.getPaths(i) else [] for i in range(3)]
 
     def test_avoid_nodes_blocks_path(self):
         """Test that avoiding a node prevents paths through it."""
@@ -91,7 +91,7 @@ class TestDijkstra(unittest.TestCase):
         d.run()
 
         # A* path to 6 should be among the paths found by Dijkstra
-        self.assertIn(d.getPath(6), a.getPaths())
+        self.assertIn(d.getPaths(6)[0], a.getPaths())
 
     def test_distance_feasibility(self):
         """Test feasibility of computed shortest path distances."""

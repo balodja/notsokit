@@ -63,7 +63,7 @@ class TestIO(unittest.TestCase):
         # In the reconstructed graph it gets edge id 0.
         d2 = notsokit.distance.Dijkstra(g2, np.array([1.0]), 0)
         d2.run()
-        self.assertEqual(d2.getPath(2), [0])
+        self.assertEqual(d2.getPaths(2)[0], [0])
 
     def test_nodes_csv_format(self):
         """nodes.csv has expected header and one row per node."""

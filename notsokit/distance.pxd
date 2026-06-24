@@ -13,7 +13,7 @@ cdef extern from "notsokit/distance/dijkstra.hpp" namespace "notsokit":
 	cdef cppclass _Dijkstra "notsokit::Dijkstra":
 		_Dijkstra(const _Graph *g, const edgeweight *wc, nodeid source) except +
 		void run() except +
-		vector[edgeid] getPath(nodeid target) except +
+		vector[vector[edgeid]] getPaths(nodeid target) except +
 		vector[edgeweight] getDistances() except +
 
 
