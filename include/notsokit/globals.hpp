@@ -21,7 +21,8 @@ constexpr edgeid noneEdge = std::numeric_limits<edgeid>::max();
 inline uint64_t visitedVerticesCount = 0;
 
 inline bool is_close(double a, double b, double reltol, double abstol) {
-    return std::fabs(a - b) <= std::max(reltol * std::max(std::fabs(a), std::fabs(b)), abstol);
+	// The min(fabs(a), fabs(b)) is crucial to avoid false positives when one of them is infinite.
+    return std::fabs(a - b) <= std::max(reltol * std::min(std::fabs(a), std::fabs(b)), abstol);
 }
 
 } // namespace notsokit
