@@ -27,7 +27,7 @@ cdef extern from "notsokit/distance/astar.hpp" namespace "notsokit":
 	cdef cppclass _AStarAdaptive "notsokit::AStarAdaptive":
 		_AStarAdaptive(const _Graph *g, const edgeweight *wc, edgeweight *heu, nodeid source, nodeid target) except +
 		void run() except +
-		vector[edgeid] getPath() except +
+		vector[vector[edgeid]] getPaths() except +
 
 
 cdef class AStarAdaptive:

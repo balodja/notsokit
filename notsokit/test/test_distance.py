@@ -90,8 +90,8 @@ class TestDijkstra(unittest.TestCase):
         d = notsokit.distance.Dijkstra(g, np.array([1.0]), 0)
         d.run()
 
-        # A* path to 6 should match Dijkstra's path to 6
-        self.assertEqual(a.getPath(), d.getPath(6))
+        # A* path to 6 should be among the paths found by Dijkstra
+        self.assertIn(d.getPath(6), a.getPaths())
 
     def test_distance_feasibility(self):
         """Test feasibility of computed shortest path distances."""

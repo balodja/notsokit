@@ -72,5 +72,5 @@ cdef class AStarAdaptive:
 	def run(self):
 		self._this.run()
 
-	def getPath(self):
-		return self._this.getPath()
+	def getPaths(self):
+		return self._this.getPaths()

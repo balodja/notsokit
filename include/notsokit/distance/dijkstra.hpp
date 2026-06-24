@@ -7,6 +7,7 @@
 #include <notsokit/auxiliary/vectorcomparator.hpp>
 
 #include <notsokit/graph/graph.hpp>
+#include <notsokit/distance/distance.hpp>
 
 namespace notsokit {
 
