@@ -2,10 +2,10 @@
 #define NOTSOKIT_DISTANCE_A_STAR_ADAPTIVE_HPP_
 
 #include <vector>
-#include <notsokit/graph/graph.hpp>
+#include <notsokit/graph.hpp>
 #include <notsokit/auxiliary/vectorcomparator.hpp>
 #include <tlx/container/d_ary_addressable_int_heap.hpp>
-#include <notsokit/distance/distance.hpp>
+#include <notsokit/distance/predecessor.hpp>
 
 namespace notsokit {
 

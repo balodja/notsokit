@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <notsokit/globals.hpp>
-#include <notsokit/graph/graph.hpp>
+#include <notsokit/graph.hpp>
 
 namespace notsokit {
 

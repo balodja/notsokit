@@ -1,5 +1,5 @@
-#ifndef NOTSOKIT_DISTANCE_HPP_
-#define NOTSOKIT_DISTANCE_HPP_
+#ifndef NOTSOKIT_DISTANCE_PREDECESSOR_HPP_
+#define NOTSOKIT_DISTANCE_PREDECESSOR_HPP_
 
 #include <notsokit/globals.hpp>
 #include <limits>
@@ -29,4 +29,4 @@ vector<vector<edgeid>> predPoolGetPaths(
 
 } // namespace notsokit
 
-#endif // NOTSOKIT_DISTANCE_HPP_
+#endif // NOTSOKIT_DISTANCE_PREDECESSOR_HPP_

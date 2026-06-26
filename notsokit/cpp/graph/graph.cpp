@@ -1,5 +1,5 @@
 #include <notsokit/globals.hpp>
-#include <notsokit/graph/graph.hpp>
+#include <notsokit/graph.hpp>
 #include <iostream>
 #include <iomanip>
 

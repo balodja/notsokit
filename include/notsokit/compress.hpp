@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
-#include <notsokit/graph/graph.hpp>
+#include <notsokit/graph.hpp>
 
 namespace notsokit {
 
@@ -41,6 +41,6 @@ private:
 
 
 
-}; // namespace notsokit
+} // namespace notsokit
 
 #endif // NOTSOKIT_GRAPH_COMPRESS_HPP

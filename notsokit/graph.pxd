@@ -11,7 +11,7 @@ cdef extern from "<algorithm>" namespace "std":
 	vector[nodeavoid] move( vector[nodeavoid] t ) nogil
 
 
-cdef extern from "notsokit/graph/graph.hpp" namespace "notsokit":
+cdef extern from "notsokit/graph.hpp" namespace "notsokit":
 	_Graph _zeroEdges "notsokit::zeroEdges"(const _Graph &G) except +
 
 	cdef cppclass _Graph "notsokit::Graph":

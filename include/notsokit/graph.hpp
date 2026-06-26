@@ -1,5 +1,5 @@
-#ifndef NOTSOKIT_GRAPH_GRAPH_HPP
-#define NOTSOKIT_GRAPH_GRAPH_HPP
+#ifndef NOTSOKIT_GRAPH_HPP
+#define NOTSOKIT_GRAPH_HPP
 
 #include <utility>
 #include <vector>
@@ -119,6 +119,6 @@ template <typename L> inline bool Graph::forEdges(L handle) const {
 }
 
 
-}; // namespace notsokit
+} // namespace notsokit
 
-#endif // NOTSOKIT_GRAPH_GRAPH_HPP
+#endif // NOTSOKIT_GRAPH_HPP

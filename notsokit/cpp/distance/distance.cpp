@@ -1,4 +1,4 @@
-#include <notsokit/distance/distance.hpp>
+#include <notsokit/distance/predecessor.hpp>
 #include <vector>
 #include <functional>
 #include <algorithm>
