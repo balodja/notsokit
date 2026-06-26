@@ -44,4 +44,35 @@ bool Graph::isFeasible(const edgeweight *wc, const edgeweight *heu) const {
     return !br;
 }
 
+
+vector<bool> nonTrivialNodes(const Graph &G) {
+	vector<bool> nonTrivial(G.upperNodeIdBound(), false);
+	G.forEdges([&](edgeid e, nodeid u, nodeid v) {
+		nonTrivial[u] = true;
+		nonTrivial[v] = true;
+		return false;
+	});
+	return nonTrivial;
+}
+
+
+Graph zeroEdges(const Graph &G) {
+	edgeweight reltol, abstol;
+	std::tie(reltol, abstol) = G.getTolerance();
+	Graph G2(G.upperNodeIdBound(), 1, reltol, abstol);
+
+	vector<edgeweight> wc(G.numDims(), 1.0);
+
+	G.forEdges([&](edgeid e, nodeid u, nodeid v) {
+		edgeweight w = G.getWeight(e, wc.data());
+		if (w == 0.0) {
+			edgeweight w2 = 1.0;
+			G2.addEdge(u, v, &w2);
+		}
+		return false;
+	});
+	return G2;
+}
+
+
 } // namespace notsokit

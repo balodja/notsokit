@@ -12,6 +12,8 @@ cdef extern from "<algorithm>" namespace "std":
 
 
 cdef extern from "notsokit/graph/graph.hpp" namespace "notsokit":
+	_Graph _zeroEdges "notsokit::zeroEdges"(const _Graph &G) except +
+
 	cdef cppclass _Graph "notsokit::Graph":
 		_Graph() except +
 		_Graph(nodeid n, edgeid k, edgeweight reltol, edgeweight abstol) except +

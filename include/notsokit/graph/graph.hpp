@@ -118,7 +118,9 @@ template <typename L> inline bool Graph::forEdges(L handle) const {
 }
 
 
-// dijkstra and astar -- return edgeids as path, not nodeids
+vector<bool> nonTrivialNodes(const Graph &G);
+
+Graph zeroEdges(const Graph &G);
 
 } // namespace notsokit
 

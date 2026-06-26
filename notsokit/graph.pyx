@@ -73,3 +73,10 @@ cdef class Graph:
 	def getTolerance(self) -> tuple:
 		cdef pair[edgeweight, edgeweight] tol = self._this.getTolerance()
 		return (tol.first, tol.second)
+
+
+def zeroEdges(Graph G) -> Graph:
+	cdef Graph result = Graph.__new__(Graph)
+	cdef _Graph tmp = _zeroEdges(G._this)
+	result.setThis(tmp)
+	return result
