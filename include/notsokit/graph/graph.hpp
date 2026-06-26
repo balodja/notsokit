@@ -71,6 +71,7 @@ public:
 
 	edgeid addEdge(nodeid from, nodeid to, const edgeweight *weights);
 	void setWeights(const edgeweight *weights);
+	const edgeweight *getWeights(edgeid e) const { return edgeWeights.data() + e * k; }
 	edgeweight getWeight(edgeid e, const edgeweight *wc) const {
 		edgeweight w = 0;
 		for (edgeid d = 0; d < k; ++d)
@@ -118,10 +119,6 @@ template <typename L> inline bool Graph::forEdges(L handle) const {
 }
 
 
-vector<bool> nonTrivialNodes(const Graph &G);
-
-Graph zeroEdges(const Graph &G);
-
-} // namespace notsokit
+}; // namespace notsokit
 
 #endif // NOTSOKIT_GRAPH_GRAPH_HPP
