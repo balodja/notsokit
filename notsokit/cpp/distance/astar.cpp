@@ -58,7 +58,9 @@ void AStarAdaptive::run() {
 			break;
 		}
 
-		G->forOutEdgesOf(top, wc, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
+		G->forOutEdgesOf(top, [&](edgeid e, nodeid uu, nodeid v) {
+			edgeweight w = G->getWeight(e, wc);
+
 			if (visited.find(v) == visited.end()) {
 				visited.insert(v);
 			}

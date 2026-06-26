@@ -31,8 +31,8 @@ inline void writeGraph(const Graph &g, const edgeweight *wc,
         if (!out) throw std::runtime_error("Cannot open for writing: " + edgesFile);
         out << "from,to,weight\n";
         out << std::setprecision(17);
-        g.forEdges(wc, [&out](edgeid /*e*/, nodeid u, nodeid v, edgeweight w) -> bool {
-            out << u << ',' << v << ',' << w << '\n';
+        g.forEdges([&out, &g, wc](edgeid e, nodeid u, nodeid v) -> bool {
+            out << u << ',' << v << ',' << g.getWeight(e, wc) << '\n';
             return false;
         });
     }

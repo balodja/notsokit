@@ -71,9 +71,16 @@ public:
 
 	edgeid addEdge(nodeid from, nodeid to, const edgeweight *weights);
 	void setWeights(const edgeweight *weights);
-	void setWeightCoefficients(const edgeweight *coefficients);
+	edgeweight getWeight(edgeid e, const edgeweight *wc) const {
+		edgeweight w = 0;
+		for (edgeid d = 0; d < k; ++d)
+			w += wc[d] * edgeWeights[e * k + d];
+		return w;
+	};
+
 	void setAvoidNodes(const nodeavoid *avoids);
 	nodeavoid getAvoidNode(nodeid u) const { return avoidNodes[u]; }
+	const nodeavoid* getAvoidNodes() const { return avoidNodes.data(); }
 	void transpose();
 
 	nodeid upperNodeIdBound() const { return n; }
@@ -83,11 +90,11 @@ public:
 	void setTolerance(edgeweight reltol, edgeweight abstol) { this->reltol = reltol; this->abstol = abstol; }
 	std::pair<edgeweight, edgeweight> getTolerance() const { return {reltol, abstol}; }
 
-	template <typename L> inline bool forEdges(const edgeweight *wc, L handle) const;
-	template <typename L> inline bool forOutEdgesOf(nodeid u, const edgeweight *wc,  L handle) const;
+	template <typename L> inline bool forEdges(L handle) const;
+	template <typename L> inline bool forOutEdgesOf(nodeid u, L handle) const;
 };
 
-template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, const edgeweight *wc, L handle) const {
+template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, L handle) const {
 	if (this->avoidNodes[u]) return false;
 
     for (nodeid i = 0; i < outEdges[u].size(); ++i) {
@@ -98,18 +105,14 @@ template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, const edgeweigh
 
 		edgeid e = std::get<1>(tpl);
 
-		edgeweight effectiveWeight = 0;
-		for (edgeid d = 0; d < k; ++d)
-			effectiveWeight += wc[d] * edgeWeights[e * k + d];
-
-		if (handle(e, u, v, effectiveWeight)) return true;
+		if (handle(e, u, v)) return true;
     }
     return false;
 }
 
-template <typename L> inline bool Graph::forEdges(const edgeweight *wc, L handle) const {
+template <typename L> inline bool Graph::forEdges(L handle) const {
     for (nodeid u = 0; u < n; ++u) {
-        if (forOutEdgesOf(u, wc, handle)) return true;
+        if (forOutEdgesOf(u, handle)) return true;
     }
 	return false;
 }

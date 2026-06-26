@@ -31,7 +31,8 @@ void Graph::transpose() {
 }
 
 bool Graph::isFeasible(const edgeweight *wc, const edgeweight *heu) const {
-    bool br = forEdges(wc, [&](edgeid e, nodeid u, nodeid v, edgeweight w) {
+    bool br = forEdges([&](edgeid e, nodeid u, nodeid v) {
+		edgeweight w = getWeight(e, wc);
         if ((w + heu[v] < heu[u]) && !is_close(w + heu[v], heu[u], reltol, abstol)) {
 			std::cerr << std::setprecision(20);
 			std::cerr << "Infeasible edge: " << u << " -> " << v << " (" << e << ") with weight " << w << std::endl;
@@ -42,6 +43,5 @@ bool Graph::isFeasible(const edgeweight *wc, const edgeweight *heu) const {
 
     return !br;
 }
-
 
 } // namespace notsokit

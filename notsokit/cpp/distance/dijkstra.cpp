@@ -34,7 +34,8 @@ void Dijkstra::run() {
         if (distances[u] == infWeight)
             break;
 
-        G->forOutEdgesOf(u, wc, [&](edgeid e, nodeid uu, nodeid v, edgeweight w) {
+        G->forOutEdgesOf(u, [&](edgeid e, nodeid uu, nodeid v) {
+			edgeweight w = G->getWeight(e, wc);
             edgeweight newDist = distances[u] + w;
 
 			if (newDist == infWeight)
