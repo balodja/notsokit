@@ -93,6 +93,7 @@ public:
 
 	template <typename L> inline bool forEdges(L handle) const;
 	template <typename L> inline bool forOutEdgesOf(nodeid u, L handle) const;
+	template <typename L> inline bool forInEdgesOf(nodeid v, L handle) const;
 };
 
 template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, L handle) const {
@@ -109,6 +110,22 @@ template <typename L> inline bool Graph::forOutEdgesOf(nodeid u, L handle) const
 		if (handle(e, u, v)) return true;
     }
     return false;
+}
+
+template <typename L> inline bool Graph::forInEdgesOf(nodeid v, L handle) const {
+	if (this->avoidNodes[v]) return false;
+
+	for (nodeid i = 0; i < inEdges[v].size(); ++i) {
+		tuple<nodeid, edgeid> tpl = inEdges[v][i];
+
+		nodeid u = std::get<0>(tpl);
+		if (this->avoidNodes[u]) continue;
+
+		edgeid e = std::get<1>(tpl);
+
+		if (handle(e, u, v)) return true;
+	}
+	return false;
 }
 
 template <typename L> inline bool Graph::forEdges(L handle) const {
