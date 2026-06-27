@@ -1,4 +1,5 @@
 #include <notsokit/compress.hpp>
+#include <stdexcept>
 
 namespace notsokit {
 

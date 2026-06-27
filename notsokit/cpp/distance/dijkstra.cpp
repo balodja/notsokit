@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <notsokit/distance/dijkstra.hpp>
 #include <notsokit/globals.hpp>
+#include <stdexcept>
 
 namespace notsokit {
 
