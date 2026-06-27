@@ -5,4 +5,3 @@ notsokit_add_module(graph
 notsokit_module_link_modules(graph)
 
 # add_subdirectory(test)
-

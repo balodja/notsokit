@@ -22,7 +22,9 @@ cdef extern from "notsokit/graph.hpp" namespace "notsokit":
 		edgeid numDims() except +
 		void transpose() except +
 		edgeid addEdge(nodeid u, nodeid v, const edgeweight *weights) except +
+		vector[edgeid] getEdges(nodeid u, nodeid v) except +
 		void setWeights(const edgeweight *w) except +
+		edgeweight getWeight(edgeid e, const edgeweight *wc) except +
 		void setAvoidNodes(const nodeavoid *avoids) except +
 		bool_t isFeasible(const edgeweight *wc, const edgeweight *heu) except +
 		void setTolerance(edgeweight reltol, edgeweight abstol) except +

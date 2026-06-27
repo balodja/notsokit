@@ -119,5 +119,85 @@ class TestIsFeasible(unittest.TestCase):
         self.assertTrue(g.isFeasible(np.array([1.0]), heu))
 
 
+class TestGetEdges(unittest.TestCase):
+    """Test suite for Graph.getEdges."""
+
+    def _make_graph(self):
+        """Graph: 0->1 (e0), 0->1 (e1, parallel), 0->2 (e2), 1->2 (e3)."""
+        g = notsokit.graph.Graph(3)
+        g.addEdge(0, 1, np.array([1.0]))
+        g.addEdge(0, 1, np.array([2.0]))
+        g.addEdge(0, 2, np.array([4.0]))
+        g.addEdge(1, 2, np.array([3.0]))
+        return g
+
+    def test_single_edge(self):
+        g = self._make_graph()
+        self.assertEqual(g.getEdges(0, 2), [2])
+
+    def test_parallel_edges(self):
+        g = self._make_graph()
+        self.assertEqual(g.getEdges(0, 1), [0, 1])
+
+    def test_no_edge(self):
+        g = self._make_graph()
+        self.assertEqual(g.getEdges(1, 0), [])
+
+    def test_self_loop_absent(self):
+        g = self._make_graph()
+        self.assertEqual(g.getEdges(0, 0), [])
+
+
+class TestSetWeights(unittest.TestCase):
+    """Test suite for Graph.setWeights."""
+
+    def test_setWeights_replaces_all_weights(self):
+        g = notsokit.graph.Graph(2)
+        g.addEdge(0, 1, np.array([1.0]))
+        g.addEdge(0, 1, np.array([2.0]))
+        new_weights = np.array([[10.0], [20.0]], dtype=np.float64)
+        g.setWeights(new_weights)
+        wc = np.array([1.0])
+        self.assertAlmostEqual(g.getWeight(0, wc), 10.0)
+        self.assertAlmostEqual(g.getWeight(1, wc), 20.0)
+
+    def test_setWeights_wrong_shape_raises(self):
+        g = notsokit.graph.Graph(2)
+        g.addEdge(0, 1, np.array([1.0]))
+        with self.assertRaises(ValueError):
+            g.setWeights(np.array([[1.0, 2.0]], dtype=np.float64))
+
+
+class TestGetWeight(unittest.TestCase):
+    """Test suite for Graph.getWeight."""
+
+    def _make_graph(self):
+        """Graph: 0->1 (w=[1,2]), 1->2 (w=[3,4])."""
+        g = notsokit.graph.Graph(3, 2)
+        g.addEdge(0, 1, np.array([1.0, 2.0]))
+        g.addEdge(1, 2, np.array([3.0, 4.0]))
+        return g
+
+    def test_single_dim_weight(self):
+        g = notsokit.graph.Graph(2)
+        g.addEdge(0, 1, np.array([5.0]))
+        self.assertAlmostEqual(g.getWeight(0, np.array([1.0])), 5.0)
+
+    def test_multidim_dot_product(self):
+        g = self._make_graph()
+        # edge 0: wc=[1,1] -> 1*1 + 1*2 = 3
+        self.assertAlmostEqual(g.getWeight(0, np.array([1.0, 1.0])), 3.0)
+
+    def test_multidim_scaled(self):
+        g = self._make_graph()
+        # edge 1: wc=[2,0] -> 2*3 + 0*4 = 6
+        self.assertAlmostEqual(g.getWeight(1, np.array([2.0, 0.0])), 6.0)
+
+    def test_wrong_wc_size_raises(self):
+        g = self._make_graph()
+        with self.assertRaises(ValueError):
+            g.getWeight(0, np.array([1.0]))
+
+
 if __name__ == '__main__':
     unittest.main()

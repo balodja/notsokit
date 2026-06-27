@@ -38,6 +38,15 @@ cdef class Graph:
 		cdef edgeweight[::1] weights_view = weights
 		return self._this.addEdge(u, v, &weights_view[0])
 
+	def getEdges(self, int u, int v) -> list:
+		return list(self._this.getEdges(u, v))
+
+	def getWeight(self, int e, cnp.ndarray[edgeweight, ndim=1, mode='c'] wc) -> float:
+		if wc.shape[0] != self._this.numDims():
+			raise ValueError(f"Expected wc array of size {self._this.numDims()}, got {wc.shape[0]}")
+		cdef edgeweight[::1] wc_view = wc
+		return self._this.getWeight(e, &wc_view[0])
+
 	def setWeights(self, cnp.ndarray[edgeweight, ndim=2, mode='c'] weights) -> None:
 		self.external_weights = weights
 

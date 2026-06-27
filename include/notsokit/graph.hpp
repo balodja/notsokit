@@ -70,6 +70,14 @@ public:
     };
 
 	edgeid addEdge(nodeid from, nodeid to, const edgeweight *weights);
+	vector<edgeid> getEdges(nodeid from, nodeid to) const {
+		vector<edgeid> edges;
+		for (nodeid i = 0; i < outEdges[from].size(); ++i) {
+			tuple<nodeid, edgeid> tpl = outEdges[from][i];
+			if (std::get<0>(tpl) == to) edges.push_back(std::get<1>(tpl));
+		}
+		return edges;
+	}
 	void setWeights(const edgeweight *weights);
 	const edgeweight *getWeights(edgeid e) const { return edgeWeights.data() + e * k; }
 	edgeweight getWeight(edgeid e, const edgeweight *wc) const {
