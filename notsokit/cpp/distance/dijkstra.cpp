@@ -42,7 +42,7 @@ void Dijkstra::run() {
 			if (newDist == infWeight)
                 return false;
 
-            if (is_close(newDist, distances[v], reltol, abstol)) {
+            if (newDist == distances[v]) {
 				preds_pool.push_back({u, e, preds[v]});
 				preds[v] = preds_pool.size() - 1;
 

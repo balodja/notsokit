@@ -54,7 +54,7 @@ void AStarAdaptive::run() {
 		top = heap.extract_top();
 		++visitedVerticesCount;
 
-		if (priority[top] > priority[target] && !is_close(priority[top], priority[target], reltol, abstol)) {
+		if (priority[top] >= priority[target]) {
 			break;
 		}
 
@@ -68,7 +68,7 @@ void AStarAdaptive::run() {
 			const edgeweight newDist = distFromSource[top] + w;
 			const edgeweight oldDist = distFromSource[v];
 
-			if (is_close(newDist, oldDist, reltol, abstol)) {
+			if (oldDist == newDist) {
 				preds_pool.push_back({top, e, preds[v]});
 				preds[v] = preds_pool.size() - 1;
 
