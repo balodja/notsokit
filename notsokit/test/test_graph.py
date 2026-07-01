@@ -119,6 +119,50 @@ class TestIsFeasible(unittest.TestCase):
         self.assertTrue(g.isFeasible(np.array([1.0]), heu))
 
 
+class TestGetPathWeights(unittest.TestCase):
+    """Test suite for Graph.getPathWeights."""
+
+    def _make_graph(self):
+        """Triangle graph: 0->1 (e0, w=1), 1->2 (e1, w=2), 0->2 (e2, w=4)."""
+        g = notsokit.graph.Graph(3)
+        g.addEdge(0, 1, np.array([1.0]))
+        g.addEdge(1, 2, np.array([2.0]))
+        g.addEdge(0, 2, np.array([4.0]))
+        return g
+
+    def test_single_edge(self):
+        """Path of one edge returns that edge's weight."""
+        g = self._make_graph()
+        result = g.getPathWeights([0])
+        np.testing.assert_array_almost_equal(result, [1.0])
+
+    def test_two_edge_path(self):
+        """Path 0->1->2 sums weights of edges 0 and 1."""
+        g = self._make_graph()
+        result = g.getPathWeights([0, 1])
+        np.testing.assert_array_almost_equal(result, [3.0])
+
+    def test_single_edge_alternative(self):
+        """Direct edge 0->2 (e2) has weight 4."""
+        g = self._make_graph()
+        result = g.getPathWeights([2])
+        np.testing.assert_array_almost_equal(result, [4.0])
+
+    def test_empty_path(self):
+        """Empty path returns zero weights."""
+        g = self._make_graph()
+        result = g.getPathWeights([])
+        np.testing.assert_array_almost_equal(result, [0.0])
+
+    def test_multidim_path(self):
+        """Multi-dimensional weights are summed per dimension."""
+        g = notsokit.graph.Graph(3, 2)
+        g.addEdge(0, 1, np.array([1.0, 10.0]))
+        g.addEdge(1, 2, np.array([2.0, 20.0]))
+        result = g.getPathWeights([0, 1])
+        np.testing.assert_array_almost_equal(result, [3.0, 30.0])
+
+
 class TestGetEdges(unittest.TestCase):
     """Test suite for Graph.getEdges."""
 
@@ -166,6 +210,37 @@ class TestSetWeights(unittest.TestCase):
         g.addEdge(0, 1, np.array([1.0]))
         with self.assertRaises(ValueError):
             g.setWeights(np.array([[1.0, 2.0]], dtype=np.float64))
+
+
+class TestGetWeights(unittest.TestCase):
+    """Test suite for Graph.getWeights."""
+
+    def test_single_dim(self):
+        """Returns the single weight for a 1-D edge."""
+        g = notsokit.graph.Graph(2)
+        g.addEdge(0, 1, np.array([7.0]))
+        np.testing.assert_array_almost_equal(g.getWeights(0), [7.0])
+
+    def test_multidim(self):
+        """Returns all dimensions for a multi-dimensional edge."""
+        g = notsokit.graph.Graph(2, 3)
+        g.addEdge(0, 1, np.array([1.0, 2.0, 3.0]))
+        np.testing.assert_array_almost_equal(g.getWeights(0), [1.0, 2.0, 3.0])
+
+    def test_multiple_edges(self):
+        """Each edge has independent weights."""
+        g = notsokit.graph.Graph(3, 2)
+        g.addEdge(0, 1, np.array([1.0, 2.0]))
+        g.addEdge(1, 2, np.array([3.0, 4.0]))
+        np.testing.assert_array_almost_equal(g.getWeights(0), [1.0, 2.0])
+        np.testing.assert_array_almost_equal(g.getWeights(1), [3.0, 4.0])
+
+    def test_after_setWeights(self):
+        """getWeights reflects updated weights after setWeights."""
+        g = notsokit.graph.Graph(2)
+        g.addEdge(0, 1, np.array([1.0]))
+        g.setWeights(np.array([[99.0]], dtype=np.float64))
+        np.testing.assert_array_almost_equal(g.getWeights(0), [99.0])
 
 
 class TestGetWeight(unittest.TestCase):

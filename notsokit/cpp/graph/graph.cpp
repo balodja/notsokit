@@ -18,17 +18,6 @@ edgeid Graph::addEdge(nodeid from, nodeid to, const edgeweight *weights) {
 	return id;
 }
 
-void Graph::setWeights(const edgeweight *weights) {
-	std::copy(weights, weights + edgeWeights.size(), edgeWeights.begin());
-}
-
-void Graph::setAvoidNodes(const nodeavoid *avoids) {
-	std::copy(avoids, avoids + n, avoidNodes.begin());
-}
-
-void Graph::transpose() {
-	std::swap(inEdges, outEdges);
-}
 
 bool Graph::isFeasible(const edgeweight *wc, const edgeweight *heu) const {
     bool br = forEdges([&](edgeid e, nodeid u, nodeid v) {

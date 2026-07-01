@@ -78,7 +78,10 @@ public:
 		}
 		return edges;
 	}
-	void setWeights(const edgeweight *weights);
+	void setWeights(const edgeweight *weights) {
+		std::copy(weights, weights + edgeWeights.size(), edgeWeights.begin());
+	}
+
 	const edgeweight *getWeights(edgeid e) const { return edgeWeights.data() + e * k; }
 	edgeweight getWeight(edgeid e, const edgeweight *wc) const {
 		edgeweight w = 0;
@@ -87,10 +90,26 @@ public:
 		return w;
 	};
 
-	void setAvoidNodes(const nodeavoid *avoids);
+	void getPathWeights(const vector<edgeid> &e, edgeweight *dest) const {
+		for (edgeid i = 0; i < k; ++i) {
+			dest[i] = 0;
+		}
+
+		for (edgeid j = 0; j < e.size(); ++j) {
+			for (edgeid i = 0; i < k; ++i) {
+				dest[i] += edgeWeights[e[j] * k + i];
+			}
+		}
+	}
+
+	void setAvoidNodes(const nodeavoid *avoids) {
+		std::copy(avoids, avoids + n, avoidNodes.begin());
+	}
 	nodeavoid getAvoidNode(nodeid u) const { return avoidNodes[u]; }
 	const nodeavoid* getAvoidNodes() const { return avoidNodes.data(); }
-	void transpose();
+	void transpose() {
+		std::swap(inEdges, outEdges);
+	}
 
 	nodeid upperNodeIdBound() const { return n; }
 	edgeid upperEdgeIdBound() const { return edgeWeights.size() / k; }

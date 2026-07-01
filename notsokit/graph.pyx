@@ -47,6 +47,18 @@ cdef class Graph:
 		cdef edgeweight[::1] wc_view = wc
 		return self._this.getWeight(e, &wc_view[0])
 
+	def getWeights(self, int e) -> cnp.ndarray:
+		cdef int k = self._this.numDims()
+		cdef const edgeweight *ptr = self._this.getWeights(e)
+		return np.array(<edgeweight[:k]>ptr, dtype=np.float64)
+
+	def getPathWeights(self, edges: list[edgeid]) -> cnp.ndarray:
+		cdef int k = self._this.numDims()
+		cdef cnp.ndarray[edgeweight, ndim=1, mode='c'] result = np.empty(k, dtype=np.float64)
+		cdef edgeweight[::1] result_view = result
+		self._this.getPathWeights(edges, &result_view[0])
+		return result
+
 	def setWeights(self, cnp.ndarray[edgeweight, ndim=2, mode='c'] weights) -> None:
 		self.external_weights = weights
 
